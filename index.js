@@ -26,6 +26,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     const productsCollection = client.db('FuniFlex').collection('products');
+    const cartsCollection = client.db('FuniFlex').collection('carts');
 
     app.get('/products', async (req, res) => {
         const page = parseInt(req.query.page)
@@ -36,6 +37,17 @@ async function run() {
     app.get('/productsCount', async (req, res) => {
         const count = await productsCollection.estimatedDocumentCount();
         res.send({ count });
+    })
+    app.get('/allProducts', async (req, res) => {
+        const result = await productsCollection.find().toArray();
+        res.send(result);
+
+    })
+    app.post('/cartData', async (req, res) => {
+        const cartItem= req.body;
+        const result = await cartsCollection.insertOne(cartItem);
+        res.send(result);
+
     })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
